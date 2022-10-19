@@ -32,10 +32,11 @@ def get_latest_build_for_subdir(url, **req_kwargs):
 
 def download_and_save_latest(url, **req_kwargs):
     # This is also a stub that will do everything in curdir and file name will match actual on remote
-    resp = requests.get(url, auth=auth)
+    resp = requests.get(url, auth=auth, stream=True)
     if resp.ok:
         with open(resp.url.split('/')[-1], 'wb+') as f:
-            f.write(resp.content)
+            for chunk in resp.iter_content(chunk_size=1024):
+                f.write(chunk)
     else:
         resp.raise_for_status()
 
